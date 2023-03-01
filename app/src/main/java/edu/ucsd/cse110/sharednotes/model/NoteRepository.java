@@ -2,10 +2,17 @@ package edu.ucsd.cse110.sharednotes.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import java.util.List;
+<<<<<<< Updated upstream
 import java.util.concurrent.ScheduledExecutorService;
+=======
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+
+>>>>>>> Stashed changes
 
 public class NoteRepository {
     private final NoteDao dao;
@@ -78,17 +85,48 @@ public class NoteRepository {
     // Remote Methods
     // ==============
 
+    private NoteAPI api;
+    //private final MutableLiveData<Long> realTime;
+    private ScheduledFuture<?> clockFuture;
+    //private final MediatorLiveData<Long> timeData;
+
+//    protected TimeService() {
+//        // Set up the real time value.
+//        realTimeData = new MutableLiveData<>();
+//        registerTimeListener();
+//
+//        // Wrap it in a MediatorLiveData, which forwards the updates (for now).
+//        timeData = new MediatorLiveData<>();
+//        timeData.addSource(realTimeData, timeData::postValue);
+//    }
+
+
+
     public LiveData<Note> getRemote(String title) {
         // TODO: Implement getRemote!
         // TODO: Set up polling background thread (MutableLiveData?)
         // TODO: Refer to TimerService from https://github.com/DylanLukes/CSE-110-WI23-Demo5-V2.
 
+<<<<<<< Updated upstream
         // Start by fetching the note from the server _once_ and feeding it into MutableLiveData.
+=======
+        // Start by fetching the note from the server ONCE. call getByTittle
+>>>>>>> Stashed changes
         // Then, set up a background thread that will poll the server every 3 seconds.
 
         // You may (but don't have to) want to cache the LiveData's for each title, so that
         // you don't create a new polling thread every time you call getRemote with the same title.
+<<<<<<< Updated upstream
         // You don't need to worry about killing background threads.
+=======
+
+//        public void registerTimeListener() {
+//            var executor = Executors.newSingleThreadScheduledExecutor();
+//            clockFuture = executor.scheduleAtFixedRate(() -> {
+//                realTimeData.postValue(System.currentTimeMillis());
+//            }, 0, 1000, TimeUnit.MILLISECONDS);
+//        }
+>>>>>>> Stashed changes
 
         throw new UnsupportedOperationException("Not implemented yet");
     }

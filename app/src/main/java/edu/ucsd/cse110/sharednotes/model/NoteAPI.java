@@ -1,9 +1,13 @@
 package edu.ucsd.cse110.sharednotes.model;
 
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
@@ -15,6 +19,7 @@ public class NoteAPI {
     private volatile static NoteAPI instance = null;
 
     private OkHttpClient client;
+    private NoteDao noteDao;
 
     public NoteAPI() {
         this.client = new OkHttpClient();
@@ -48,5 +53,26 @@ public class NoteAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String getByTitle(String msg) {
+        // URLs cannot contain spaces, so we replace them with %20.
+        msg = msg.replace(" ", "%20");
+
+        var request = new Request.Builder()
+                .url("https://sharednotes.goto.ucsd.edu/note/" + msg)
+                .method("GET", null)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            var body = response.body().string();
+            var result =  noteDao.get(body);
+            Log.i("GET BY TITLE", result.toString());
+            return body;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
