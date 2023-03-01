@@ -3,13 +3,18 @@ package edu.ucsd.cse110.sharednotes.model;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
 import okhttp3.HttpUrl;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 
 public class NoteAPI {
     // TODO: Implement the API using OkHttp!
@@ -55,24 +60,68 @@ public class NoteAPI {
         }
     }
 
-    public String getByTitle(String msg) {
-        // URLs cannot contain spaces, so we replace them with %20.
-        msg = msg.replace(" ", "%20");
-
+    public Note getByTitle(String title) {
+        title = title.replace(" ", "%20");
         var request = new Request.Builder()
-                .url("https://sharednotes.goto.ucsd.edu/note/" + msg)
+                .url("https://sharednotes.goto.ucsd.edu/note/" + title)
                 .method("GET", null)
                 .build();
 
         try (var response = client.newCall(request).execute()) {
             assert response.body() != null;
             var body = response.body().string();
-            var result =  noteDao.get(body);
-            Log.i("GET BY TITLE", result.toString());
-            return body;
+            Log.i("GET BY TITLE", body);
+            return Note.fromJSON(body);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return new Note(title, "");
     }
+
+    public void putByTitle(String title, String msg) {
+        // URLs cannot contain spaces, so we replace them with %20.
+        title = title.replace(" ", "%20") ;
+        String json = "{\"content\":\"" + msg + "\",\"updated_at\":\""
+                + System.currentTimeMillis() + "\"}";
+
+        MediaType JSON = MediaType.get("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(json, JSON);
+
+        var request = new Request.Builder()
+                .url("https://sharednotes.goto.ucsd.edu/notes/" + title)
+                .method("PUT", body)
+                .build();
+
+        try (var response = client.newCall(request).execute()) {
+            assert response.body() != null;
+            var result = response.body().string();
+            Log.i("PUT BY TITLE", result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public LiveData<Note> getByTitle(String title) {
+//        title = title.replace(" ", "%20");
+//        //MutableLiveData<Note> noteMutableLiveData = new MutableLiveData<>();
+//        var request = new Request.Builder()
+//                .url("https://sharednotes.goto.ucsd.edu/note/" + title)
+//                .method("GET BY TITLE", null)
+//                .build();
+//
+//        try (var response = client.newCall(request).execute()) {
+//            assert response.body() != null;
+//            var body = response.body().string();
+//            //Gson gson = new Gson();
+//            //var result =  gson.fromJson(body, Note.class);
+//            //noteMutableLiveData.postValue(result);
+//            Log.i("GET BY TITLE", result.toString());
+//            //return noteMutableLiveData;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+
+
 }

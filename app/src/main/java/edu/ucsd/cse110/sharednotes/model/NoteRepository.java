@@ -5,20 +5,26 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import org.json.JSONObject;
+import org.w3c.dom.Node;
+
 import java.util.List;
-<<<<<<< Updated upstream
+import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
-=======
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
-
->>>>>>> Stashed changes
+import java.util.concurrent.TimeUnit;
 
 public class NoteRepository {
     private final NoteDao dao;
+    private NoteAPI api;
+    private ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> scheduledFuture = null;
 
     public NoteRepository(NoteDao dao) {
         this.dao = dao;
+        this.scheduler = Executors.newSingleThreadScheduledExecutor();
+        this.api = new NoteAPI();
     }
 
     // Synced Methods
@@ -84,41 +90,19 @@ public class NoteRepository {
 
     // Remote Methods
     // ==============
-
-    private NoteAPI api;
-    //private final MutableLiveData<Long> realTime;
-    private ScheduledFuture<?> clockFuture;
-    //private final MediatorLiveData<Long> timeData;
-
-//    protected TimeService() {
-//        // Set up the real time value.
-//        realTimeData = new MutableLiveData<>();
-//        registerTimeListener();
-//
-//        // Wrap it in a MediatorLiveData, which forwards the updates (for now).
-//        timeData = new MediatorLiveData<>();
-//        timeData.addSource(realTimeData, timeData::postValue);
-//    }
-
-
-
     public LiveData<Note> getRemote(String title) {
         // TODO: Implement getRemote!
         // TODO: Set up polling background thread (MutableLiveData?)
         // TODO: Refer to TimerService from https://github.com/DylanLukes/CSE-110-WI23-Demo5-V2.
 
-<<<<<<< Updated upstream
         // Start by fetching the note from the server _once_ and feeding it into MutableLiveData.
-=======
         // Start by fetching the note from the server ONCE. call getByTittle
->>>>>>> Stashed changes
         // Then, set up a background thread that will poll the server every 3 seconds.
 
         // You may (but don't have to) want to cache the LiveData's for each title, so that
         // you don't create a new polling thread every time you call getRemote with the same title.
-<<<<<<< Updated upstream
         // You don't need to worry about killing background threads.
-=======
+
 
 //        public void registerTimeListener() {
 //            var executor = Executors.newSingleThreadScheduledExecutor();
@@ -126,13 +110,38 @@ public class NoteRepository {
 //                realTimeData.postValue(System.currentTimeMillis());
 //            }, 0, 1000, TimeUnit.MILLISECONDS);
 //        }
->>>>>>> Stashed changes
+//        var api = new NoteAPI();
+//        var note = api.getByTitle(title);
 
-        throw new UnsupportedOperationException("Not implemented yet");
+        MediatorLiveData<Note> remoteNote = new MediatorLiveData<>();
+        if (scheduledFuture != null) {
+            scheduledFuture.cancel(false);
+        }
+
+        scheduledFuture = scheduler.scheduleAtFixedRate(new Runnable() {
+            String oldData = api.getByTitle(title).content;
+            @Override
+            public void run() {
+                Note currData = api.getByTitle(title);
+                if (!Objects.equals(oldData, currData.content)) {
+                    remoteNote.postValue(currData);
+                    oldData = currData.content;
+                }
+            }
+        }, 0, 3, TimeUnit.SECONDS);
+
+        return remoteNote;
+        //throw new UnsupportedOperationException("Not implemented yet");
     }
 
     public void upsertRemote(Note note) {
         // TODO: Implement upsertRemote!
-        throw new UnsupportedOperationException("Not implemented yet");
+        //throw new UnsupportedOperationException("Not implemented yet");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                api.putByTitle(note.title, note.content);
+            }
+        }).start();
     }
 }
