@@ -50,7 +50,7 @@ public class NoteRepository {
         Observer<Note> updateFromRemote = theirNote -> {
             if (theirNote == null) return;
             var ourNote = note.getValue();
-            if (ourNote == null || ourNote.updatedAt < theirNote.updatedAt) {
+            if (ourNote == null || ourNote.version < theirNote.version)  {
                 upsertLocal(theirNote);
             }
         };
@@ -81,7 +81,8 @@ public class NoteRepository {
 
     public void upsertLocal(Note note) {
         //note.updatedAt = System.currentTimeMillis();
-        note.updatedAt = Instant.now().getEpochSecond();
+//        note.updatedAt = Instant.now().getEpochSecond();
+        note.version = note.version + 1;
         dao.upsert(note);
     }
 
@@ -146,7 +147,7 @@ public class NoteRepository {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                api.putByTitle(note.title, note.content);
+                api.putByTitle(note);
             }
         }).start();
 //        if (note != null) {
