@@ -45,6 +45,7 @@ public class NoteRepository {
         var note = new MediatorLiveData<Note>();
 
         Observer<Note> updateFromRemote = theirNote -> {
+            if (theirNote == null) return;
             var ourNote = note.getValue();
             if (ourNote == null || ourNote.updatedAt < theirNote.updatedAt) {
                 upsertLocal(theirNote);
@@ -119,14 +120,14 @@ public class NoteRepository {
         }
 
         scheduledFuture = scheduler.scheduleAtFixedRate(new Runnable() {
-            String oldData = api.getByTitle(title).content;
+           // String oldData = api.getByTitle(title).content;
             @Override
             public void run() {
                 Note currData = api.getByTitle(title);
-                if (!Objects.equals(oldData, currData.content)) {
+//                if (!Objects.equals(oldData, currData.content)) {
                     remoteNote.postValue(currData);
-                    oldData = currData.content;
-                }
+//                    oldData = currData.content;
+//                }
             }
         }, 0, 3, TimeUnit.SECONDS);
 
