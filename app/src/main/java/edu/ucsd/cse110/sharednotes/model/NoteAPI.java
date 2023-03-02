@@ -90,10 +90,10 @@ public class NoteAPI {
         return new Note(title, "");
     }
 
-    public void putByTitle(String title, String msg) {
+    public void putByTitle(String title, String content) {
         // URLs cannot contain spaces, so we replace them with %20.
         title = title.replace(" ", "%20") ;
-        String json = "{\"content\":\"" + msg + "\",\"updated_at\":\""
+        String json = "{\"content\":\"" + content + "\",\"updated_at\":\""
                 + System.currentTimeMillis() + "\"}";
 
         MediaType JSON = MediaType.get("application/json; charset=utf-8");

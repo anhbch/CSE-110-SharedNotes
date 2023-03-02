@@ -1,5 +1,7 @@
 package edu.ucsd.cse110.sharednotes.model;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -125,8 +127,9 @@ public class NoteRepository {
            // String oldData = api.getByTitle(title).content;
             @Override
             public void run() {
-                Note currData = api.getByTitle(title);
-                remoteNote.postValue(currData);
+                //Note currData = api.getByTitle(title);
+                remoteNote.postValue(api.getByTitle(title));
+                Log.i("GET REMOTE", api.getByTitle(title).content);
                //if (!Objects.equals(oldData, currData.content)) {
                    // oldData = currData.content;
               //}
@@ -146,6 +149,9 @@ public class NoteRepository {
                 api.putByTitle(note.title, note.content);
             }
         }).start();
+//        if (note != null) {
+//            api.putByTitle(note.title, note.content);
+//        }
         //api.putByTitle(note.title, note.content);
     }
 }

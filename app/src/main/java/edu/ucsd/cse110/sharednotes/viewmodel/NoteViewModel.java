@@ -1,6 +1,7 @@
 package edu.ucsd.cse110.sharednotes.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -28,9 +29,11 @@ public class NoteViewModel extends AndroidViewModel {
         // the database, or when the server returns a newer version of the note.
         // Polling interval: 3s.
         //note = repo.getSynced(title);
+
         if (note == null) {
             //note = repo.getLocal(title);
             note = repo.getSynced(title);
+            Log.i("GET NOTE", "updated");
         }
         return note;
     }
