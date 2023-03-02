@@ -3,12 +3,16 @@ package edu.ucsd.cse110.sharednotes.model;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.annotation.AnyThread;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
 
 import org.json.JSONObject;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
@@ -58,6 +62,14 @@ public class NoteAPI {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    @AnyThread
+    public Future<String> echoAsync(String msg) {
+        var executor = Executors.newSingleThreadExecutor();
+        var future = executor.submit(() -> echo(msg));
+
+        // We can use future.get(1, SECONDS) to wait for the result.
+        return (Future<String>) future;
     }
 
     public Note getByTitle(String title) {

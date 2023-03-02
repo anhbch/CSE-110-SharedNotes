@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ScheduledExecutorService;
@@ -77,7 +78,8 @@ public class NoteRepository {
     }
 
     public void upsertLocal(Note note) {
-        note.updatedAt = System.currentTimeMillis();
+        //note.updatedAt = System.currentTimeMillis();
+        note.updatedAt = Instant.now().getEpochSecond();
         dao.upsert(note);
     }
 
@@ -124,10 +126,10 @@ public class NoteRepository {
             @Override
             public void run() {
                 Note currData = api.getByTitle(title);
-//                if (!Objects.equals(oldData, currData.content)) {
+               //if (!Objects.equals(oldData, currData.content)) {
                     remoteNote.postValue(currData);
-//                    oldData = currData.content;
-//                }
+                   // oldData = currData.content;
+              //}
             }
         }, 0, 3, TimeUnit.SECONDS);
 
