@@ -126,12 +126,12 @@ public class NoteRepository {
             @Override
             public void run() {
                 Note currData = api.getByTitle(title);
+                remoteNote.postValue(currData);
                //if (!Objects.equals(oldData, currData.content)) {
-                    remoteNote.postValue(currData);
                    // oldData = currData.content;
               //}
             }
-        }, 0, 3, TimeUnit.SECONDS);
+        }, 0, 3000, TimeUnit.MILLISECONDS);
 
         return remoteNote;
         //throw new UnsupportedOperationException("Not implemented yet");
