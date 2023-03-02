@@ -136,12 +136,13 @@ public class NoteRepository {
 
     public void upsertRemote(Note note) {
         // TODO: Implement upsertRemote!
-        //throw new UnsupportedOperationException("Not implemented yet");
+       // throw new UnsupportedOperationException("Not implemented yet");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 api.putByTitle(note.title, note.content);
             }
         }).start();
+        //api.putByTitle(note.title, note.content);
     }
 }

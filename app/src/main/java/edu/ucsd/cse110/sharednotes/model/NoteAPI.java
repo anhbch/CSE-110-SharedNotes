@@ -63,7 +63,7 @@ public class NoteAPI {
     public Note getByTitle(String title) {
         title = title.replace(" ", "%20");
         var request = new Request.Builder()
-                .url("https://sharednotes.goto.ucsd.edu/note/" + title)
+                .url("https://sharednotes.goto.ucsd.edu/notes/" + title)
                 .method("GET", null)
                 .build();
 
